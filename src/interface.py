@@ -1,8 +1,11 @@
-from repository import AbstractRepository
+from typing import Type
+
+from config import BOOK_STATUSES
+from src.repository import AbstractRepository
 
 
 class UserInterface:
-    def __init__(self, repository: type[AbstractRepository]):
+    def __init__(self, repository: Type[AbstractRepository]):
         self.repository = repository
 
     def show_menu(self):
@@ -82,10 +85,7 @@ class UserInterface:
                 print("Invalid choice. Please try again.")
                 return
 
-        if books:
-            self._print_books_table(books)
-        else:
-            print("No books found.")
+        self._print_books_table(books)
 
     def delete_book(self):
         """Delete a book by its ID."""
@@ -108,10 +108,7 @@ class UserInterface:
         """
         print("\n=== All books ===")
         books = self.repository.get_all_books()
-        if books:
-            self._print_books_table(books)
-        else:
-            print("No books found.")
+        self._print_books_table(books)
 
     def update_book_status(self):
         """
@@ -121,9 +118,11 @@ class UserInterface:
         print("\n=== Update book status ===")
         book_id = input("Enter the ID of the book to update\n>> ")
         status = input("Enter the new status\n>> ")
+        if not book_id.isdigit() or status not in BOOK_STATUSES:
+            print("Book ID must be a number. or invalid status. Please choose a valid status. (В наличии, Выдана)")
+            return
         try:
-            book_id = int(book_id)
-            self.repository.update_book_status(book_id, status)
+            self.repository.update_book_status(int(book_id), status)
             print("Book status updated successfully.")
         except ValueError as e:
             print(e)
@@ -138,7 +137,7 @@ class UserInterface:
             print("No books found.")
             return
 
-        headers = ["ID", "Название", "Автор", "Год", "Статус"]
+        headers = ["ID", "Title", "Author", "Year", "Status"]
 
         column_widths = {
             "ID": max(len(str(book.get("id", ""))) for book in books + [{"id": headers[0]}]),
@@ -156,10 +155,10 @@ class UserInterface:
             row = " | ".join(
                 [
                     str(book.get("id", "")).ljust(column_widths["ID"]),
-                    book.get("title", "").ljust(column_widths["Название"]),
-                    book.get("author", "").ljust(column_widths["Автор"]),
-                    str(book.get("year", "")).ljust(column_widths["Год"]),
-                    book.get("status", "Не указан").ljust(column_widths["Статус"]),
+                    book.get("title", "").ljust(column_widths["Title"]),
+                    book.get("author", "").ljust(column_widths["Author"]),
+                    str(book.get("year", "")).ljust(column_widths["Year"]),
+                    book.get("status", "Не указан").ljust(column_widths["Status"]),
                 ]
             )
             print(row)

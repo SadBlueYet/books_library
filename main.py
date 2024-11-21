@@ -1,5 +1,5 @@
-from repository import JsonRepository
-from interface import UserInterface
+from src.interface import UserInterface
+from src.repository import JsonRepository
 
 
 def main():

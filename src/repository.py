@@ -1,13 +1,13 @@
-from abc import ABC, abstractmethod
 import json
 import os
+from abc import ABC, abstractmethod
 
 from config import LIBRARY_PATH
 
 
 class AbstractRepository(ABC):
     @abstractmethod
-    def add_book(self, book: dict) -> None:
+    def add_book(self, book: dict) -> int:
         pass
 
     @abstractmethod
@@ -24,6 +24,10 @@ class AbstractRepository(ABC):
 
 
 class JsonRepository:
+
+    def __init__(self, library_path: str = LIBRARY_PATH):
+        self.library_path = library_path
+
     def _load_books(self) -> dict[str, int | list]:
         """
         Load books from library file.
@@ -31,10 +35,10 @@ class JsonRepository:
             dict[str, int | list]: A dictionary with a single key "max_id" of type int
             and a key "books" of type list of dictionaries.
         """
-        if not os.path.exists(LIBRARY_PATH):
+        if not os.path.exists(self.library_path):
             return {"max_id": 0, "books": []}
 
-        with open(LIBRARY_PATH, "r", encoding="utf-8") as file:
+        with open(self.library_path, "r", encoding="utf-8") as file:
             data = json.load(file)
             if "max_id" not in data:
                 data["max_id"] = 0
@@ -49,14 +53,15 @@ class JsonRepository:
         is a list of dictionaries, each containing the details of a book.
         :return: None
         """
-        with open(LIBRARY_PATH, "w", encoding="utf-8") as file:
+        with open(self.library_path, "w", encoding="utf-8") as file:
             json.dump(data, file, ensure_ascii=False, indent=4)
 
-    def add_book(self, book: dict) -> None:
+    def add_book(self, book: dict) -> int:
         """
         Add a new book to the library.
 
         :param book: A dictionary containing the details of the book to add.
+        :return: The ID of the added book.
         :raises ValueError: If the book is already in the library.
         """
         data = self._load_books()
@@ -64,6 +69,7 @@ class JsonRepository:
         book["id"] = data["max_id"]
         data["books"].append(book)
         self._save_books(data)
+        return book["id"]
 
     def get_books(self, filter_by: dict) -> list:
         """
@@ -114,7 +120,8 @@ class JsonRepository:
     def get_all_books(self) -> list[dict]:
         """
         Retrieve all books from the library.
-        :return: A list of dictionaries, each representing a book with its details such as "id", "title", "author", "year", and "status".
+        :return: A list of dictionaries, each representing a book with its details such as
+        "id", "title", "author", "year", and "status".
         """
         data = self._load_books()
         return data["books"]

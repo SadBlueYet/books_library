@@ -31,7 +31,7 @@ class JsonRepository:
     def _load_books(self) -> dict[str, int | list]:
         """
         Load books from library file.
-        Returns:
+        :return:
             dict[str, int | list]: A dictionary with a single key "max_id" of type int
             and a key "books" of type list of dictionaries.
         """

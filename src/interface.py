@@ -120,7 +120,7 @@ class UserInterface:
         status = self._format_status(status)
 
         if not book_id.isdigit() or status not in BOOK_STATUSES:
-            print("Book ID must be a number. or invalid status. Please choose a valid status. (В наличии, Выдана)")
+            print("Book ID must be a number or invalid status. Please choose a valid status. (В наличии, Выдана)")
             return
 
         try:
@@ -132,8 +132,7 @@ class UserInterface:
     def _print_books_table(self, books: list[dict]):
         """
         Prints books in a nice table format.
-        Args:
-            books: A list of book dictionaries with keys "id", "title", "author", "year", and "status".
+        :param books: A list of book dictionaries with keys "id", "title", "author", "year", and "status".
         """
         if not books:
             print("No books found.")
@@ -166,8 +165,15 @@ class UserInterface:
             print(row)
 
     def _format_status(self, status: str) -> str:
+        """
+        Formats the book status into a standard view.
+        Converts the input status string to one of two valid formats:
+        "В наличии" or "Выдана", regardless of the case of the input string.
+        :param status: Initial status of the book.
+        :return: Formatted status of the book ("В наличии" or "Выдана").
+        """
         status = status.lower()
-        if 'выдана' in status:
+        if status == 'выдана':
             return 'Выдана'
-        else:
+        elif status == 'в наличии':
             return 'В наличии'

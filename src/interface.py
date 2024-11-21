@@ -19,7 +19,7 @@ class UserInterface:
             print("5. Update book status")
             print("0. Exit")
 
-            choice = input("Select an option: ")
+            choice = input("Select an option: ").strip()
             try:
                 print("\nPress Ctrl+C at any time to cancel.")
                 if choice == "1":
@@ -43,9 +43,9 @@ class UserInterface:
     def add_book(self):
         """Add a new book to the library."""
         print("\n=== Adding Book ===")
-        title = input("Enter the title of the book\n>> ")
-        author = input("Enter the author of the book\n>> ")
-        year = input("Enter the year of publication\n>> ")
+        title = input("Enter the title of the book\n>> ").strip()
+        author = input("Enter the author of the book\n>> ").strip()
+        year = input("Enter the year of publication\n>> ").strip()
 
         if not title or not author or not year.isdigit() or int(year) < 0:
             print(
@@ -67,16 +67,16 @@ class UserInterface:
         results.
         """
         print("\n=== Find books ===")
-        choice = input("1. Find by title\n2. Find by author\n3. Find by year\n>> ")
+        choice = input("1. Find by title\n2. Find by author\n3. Find by year\n>> ").strip()
         match choice:
             case "1":
-                title = input("Enter the title of the book\n>> ")
+                title = input("Enter the title of the book\n>> ").strip()
                 books = self.repository.get_books({"title": title})
             case "2":
-                author = input("Enter the author of the book\n>> ")
+                author = input("Enter the author of the book\n>> ").strip()
                 books = self.repository.get_books({"author": author})
             case "3":
-                year = input("Enter the year of publication\n>> ")
+                year = input("Enter the year of publication\n>> ").strip()
                 if not year.isdigit() or int(year) < 0:
                     print("Invalid input. Please provide a valid non-negative year.")
                     return
@@ -90,7 +90,7 @@ class UserInterface:
     def delete_book(self):
         """Delete a book by its ID."""
         print("\n=== Deleting Book ===")
-        book_id = input("Enter the ID of the book to delete\n>> ")
+        book_id = input("Enter the ID of the book to delete\n>> ").strip()
         if not book_id.isdigit():
             print("Book ID must be a number.")
             return
@@ -116,8 +116,9 @@ class UserInterface:
         Asks the user to input the ID of the book and the new status.
         """
         print("\n=== Update book status ===")
-        book_id = input("Enter the ID of the book to update\n>> ")
-        status = input("Enter the new status\n>> ")
+        book_id = input("Enter the ID of the book to update\n>> ").strip()
+        status = input("Enter the new status\n>> ").strip()
+        status = self._format_status(status)
         if not book_id.isdigit() or status not in BOOK_STATUSES:
             print("Book ID must be a number. or invalid status. Please choose a valid status. (В наличии, Выдана)")
             return
@@ -162,3 +163,10 @@ class UserInterface:
                 ]
             )
             print(row)
+
+    def _format_status(self, status: str) -> str:
+        status = status.lower()
+        if 'выдана' in status:
+            return 'Выдана'
+        else:
+            return 'В наличии'

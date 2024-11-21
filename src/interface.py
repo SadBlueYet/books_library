@@ -48,9 +48,7 @@ class UserInterface:
         year = input("Enter the year of publication\n>> ").strip()
 
         if not title or not author or not year.isdigit() or int(year) < 0:
-            print(
-                "Invalid input. Please provide a valid title, author, and a non-negative year."
-            )
+            print("Invalid input. Please provide a valid title, author, and a non-negative year.")
             return
 
         self.repository.add_book(
@@ -91,6 +89,7 @@ class UserInterface:
         """Delete a book by its ID."""
         print("\n=== Deleting Book ===")
         book_id = input("Enter the ID of the book to delete\n>> ").strip()
+
         if not book_id.isdigit():
             print("Book ID must be a number.")
             return
@@ -119,9 +118,11 @@ class UserInterface:
         book_id = input("Enter the ID of the book to update\n>> ").strip()
         status = input("Enter the new status\n>> ").strip()
         status = self._format_status(status)
+
         if not book_id.isdigit() or status not in BOOK_STATUSES:
             print("Book ID must be a number. or invalid status. Please choose a valid status. (В наличии, Выдана)")
             return
+
         try:
             self.repository.update_book_status(int(book_id), status)
             print("Book status updated successfully.")
